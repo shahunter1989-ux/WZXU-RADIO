@@ -32,35 +32,40 @@
       <div class="mobile-story-art" aria-hidden="true"></div>
     </section>
 
-    <section class="player-panel" aria-labelledby="player-title">
-      <div class="player-topline">
-        <div>
-          <p class="section-kicker">Now streaming</p>
-          <h2 id="player-title">Underground Playlist</h2>
-        </div>
-        <p id="playerState" class="player-state">Loading player</p>
+    <section class="player-panel media-player" id="mediaPlayer" aria-labelledby="player-title">
+      <div class="media-sheen" aria-hidden="true"></div>
+      <div class="player-copy">
+        <p class="section-kicker" id="playerState">Now Playing</p>
+        <h2 id="player-title">The One and All</h2>
+        <p id="trackTitle">Music Playing</p>
+        <p id="trackDetail">WZXU RADIO streaming playlist</p>
       </div>
 
-      <div class="track-display">
-        <div class="track-art" aria-hidden="true">
-          <span></span>
-        </div>
-        <div class="track-meta">
-          <p class="track-label">Current track</p>
-          <h3 id="trackTitle">Connect a YouTube playlist</h3>
-          <p id="trackDetail">Paste your playlist ID in script.js to begin.</p>
-        </div>
+      <div class="visualizer" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
       </div>
 
       <div class="controls" aria-label="Playlist controls">
-        <button id="prevBtn" class="icon-btn" type="button" aria-label="Previous track">&lt;</button>
-        <button id="playPauseBtn" class="play-btn" type="button" aria-label="Play playlist">Play</button>
-        <button id="nextBtn" class="icon-btn" type="button" aria-label="Next track">&gt;</button>
+        <button id="prevBtn" class="icon-btn media-control" type="button" aria-label="Previous track">
+          <span>|&lt;</span>
+        </button>
+        <button id="playPauseBtn" class="play-btn media-play" type="button" aria-label="Play playlist">
+          <span>Play</span>
+        </button>
+        <button id="nextBtn" class="icon-btn media-control" type="button" aria-label="Next track">
+          <span>&gt;|</span>
+        </button>
       </div>
 
-      <div class="playlist-tabs" id="playlistTabs" aria-label="Choose playlist"></div>
+      <div class="playlist-tabs sr-only" id="playlistTabs" aria-label="Choose playlist"></div>
 
-      <div class="playlist-wrap">
+      <div class="playlist-wrap sr-only" aria-hidden="true">
         <div class="playlist-heading">
           <p>Playlist</p>
           <span id="playlistCount">0 tracks</span>

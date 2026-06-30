@@ -2,7 +2,7 @@
 // Each playlist can be renamed by changing its name value.
 const WZXU_PLAYLISTS = [
   {
-    name: "THE ONE IN ALL",
+    name: "The One and All",
     tracks: [
       "https://www.youtube.com/watch?v=p4vQ9fl5r9o&list=RDp4vQ9fl5r9o&start_radio=1",
       "https://www.youtube.com/watch?v=xbbA-SVP0tI&list=RDxbbA-SVP0tI&start_radio=1",
@@ -19,6 +19,7 @@ let player;
 let activePlaylistIndex = 0;
 let currentTrackIndex = 0;
 let isReady = false;
+let hasAttemptedPlayback = false;
 
 const playPauseBtn = document.getElementById("playPauseBtn");
 const prevBtn = document.getElementById("prevBtn");
@@ -29,6 +30,7 @@ const playerState = document.getElementById("playerState");
 const playlistTabs = document.getElementById("playlistTabs");
 const playlistEl = document.getElementById("playlist");
 const playlistCount = document.getElementById("playlistCount");
+const mediaPlayer = document.getElementById("mediaPlayer");
 
 function onYouTubeIframeAPIReady() {
   player = new YT.Player("youtubePlayer", {
@@ -50,7 +52,7 @@ function onYouTubeIframeAPIReady() {
 
 function handlePlayerReady() {
   isReady = true;
-  playerState.textContent = "Ready";
+  playerState.textContent = "Now Playing";
   renderPlaylistTabs();
   renderActivePlaylist();
 }
@@ -134,7 +136,7 @@ function renderActivePlaylist() {
   playlistCount.textContent = `${tracks.length} ${tracks.length === 1 ? "track" : "tracks"}`;
 
   if (!tracks.length) {
-    trackTitle.textContent = `${playlist.name} is ready`;
+    trackTitle.textContent = "Music Playing";
     trackDetail.textContent = "Add YouTube links in script.js.";
 
     const empty = document.createElement("li");
@@ -143,29 +145,6 @@ function renderActivePlaylist() {
     playlistEl.appendChild(empty);
     return;
   }
-
-  tracks.forEach((track, index) => {
-    const li = document.createElement("li");
-    if (index === currentTrackIndex) {
-      li.classList.add("active");
-    }
-
-    const button = document.createElement("button");
-    button.type = "button";
-    button.setAttribute("aria-label", `Play ${playlist.name} track ${index + 1}`);
-    button.addEventListener("click", () => playTrack(index));
-
-    const number = document.createElement("span");
-    number.className = "index";
-    number.textContent = String(index + 1).padStart(2, "0");
-
-    const title = document.createElement("span");
-    title.textContent = track.title;
-
-    button.append(number, title);
-    li.appendChild(button);
-    playlistEl.appendChild(li);
-  });
 
   updateTrackDisplay();
 }
@@ -179,8 +158,8 @@ function updateTrackDisplay() {
     return;
   }
 
-  trackTitle.textContent = activeTrack.title;
-  trackDetail.textContent = `${playlist.name} | Track ${currentTrackIndex + 1} of ${tracks.length}`;
+  trackTitle.textContent = "Music Playing";
+  trackDetail.textContent = `${playlist.name} | ${tracks.length} songs loaded`;
 }
 
 function playTrack(index) {
@@ -192,6 +171,7 @@ function playTrack(index) {
   }
 
   currentTrackIndex = index;
+  hasAttemptedPlayback = true;
   player.loadVideoById(selectedTrack.videoId);
   renderActivePlaylist();
 }
@@ -204,23 +184,27 @@ function playCurrentTrack() {
     return;
   }
 
+  hasAttemptedPlayback = true;
   player.loadVideoById(tracks[currentTrackIndex].videoId);
 }
 
 function handlePlayerStateChange(event) {
   if (event.data === YT.PlayerState.PLAYING) {
+    mediaPlayer.classList.add("is-playing");
     playPauseBtn.textContent = "Pause";
     playPauseBtn.setAttribute("aria-label", "Pause playlist");
-    playerState.textContent = "Playing";
+    playerState.textContent = "Now Playing";
   }
 
   if (event.data === YT.PlayerState.PAUSED) {
+    mediaPlayer.classList.remove("is-playing");
     playPauseBtn.textContent = "Play";
     playPauseBtn.setAttribute("aria-label", "Play playlist");
     playerState.textContent = "Paused";
   }
 
   if (event.data === YT.PlayerState.ENDED) {
+    mediaPlayer.classList.remove("is-playing");
     playNextTrack();
   }
 
@@ -230,8 +214,15 @@ function handlePlayerStateChange(event) {
 }
 
 function handlePlayerError() {
+  if (!hasAttemptedPlayback) {
+    playerState.textContent = "Now Playing";
+    trackTitle.textContent = "Music Playing";
+    trackDetail.textContent = `${getActivePlaylist().name} | ${getActiveTracks().length} songs loaded`;
+    return;
+  }
+
   if (!getActiveTracks().length) {
-    playerState.textContent = "Ready";
+    playerState.textContent = "Now Playing";
     trackDetail.textContent = "Add YouTube links in script.js.";
     return;
   }

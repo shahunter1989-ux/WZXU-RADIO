@@ -165,6 +165,207 @@ h1 {
   box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
+.media-player {
+  --player-edge: rgba(255, 255, 255, 0.16);
+  isolation: isolate;
+  width: min(880px, 100%);
+  min-height: 290px;
+  margin: 0 auto;
+  padding: 42px 54px 38px;
+  display: grid;
+  justify-items: center;
+  gap: 22px;
+  border-radius: 56px;
+  border-color: var(--player-edge);
+  background:
+    radial-gradient(circle at 50% 118%, rgba(255, 255, 255, 0.14), transparent 36%),
+    linear-gradient(152deg, rgba(255, 255, 255, 0.16), transparent 31%),
+    linear-gradient(180deg, rgba(34, 38, 43, 0.92), rgba(4, 7, 10, 0.94));
+  box-shadow:
+    0 34px 82px rgba(0, 0, 0, 0.58),
+    inset 0 2px 3px rgba(255, 255, 255, 0.16),
+    inset 0 -16px 36px rgba(0, 0, 0, 0.54);
+}
+
+.media-player::before {
+  display: none;
+}
+
+.media-player::after {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  z-index: -1;
+  border-radius: 44px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 46%);
+  opacity: 0.8;
+}
+
+.media-sheen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.media-sheen::before {
+  content: "";
+  position: absolute;
+  top: -80%;
+  left: -35%;
+  width: 80%;
+  height: 230%;
+  background: linear-gradient(105deg, transparent 0%, rgba(255, 255, 255, 0.16) 45%, transparent 65%);
+  transform: rotate(11deg);
+  animation: playerSheen 8s ease-in-out infinite;
+}
+
+.player-copy {
+  text-align: center;
+}
+
+.player-copy h2 {
+  margin: 12px 0 0;
+  font-size: clamp(2.25rem, 5vw, 4.2rem);
+  line-height: 1;
+  text-shadow: 0 4px 18px rgba(255, 255, 255, 0.12);
+}
+
+.player-copy #trackTitle {
+  margin: 12px 0 0;
+  color: rgba(245, 247, 251, 0.84);
+  font-weight: 800;
+}
+
+.player-copy #trackDetail {
+  margin-top: 6px;
+  font-size: 0.9rem;
+}
+
+.visualizer {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 6px;
+  height: 26px;
+  opacity: 0.42;
+}
+
+.visualizer span {
+  width: 4px;
+  height: 9px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(37, 244, 199, 0.56));
+  animation: equalizerIdle 2.4s ease-in-out infinite;
+}
+
+.visualizer span:nth-child(2) { animation-delay: 140ms; }
+.visualizer span:nth-child(3) { animation-delay: 280ms; }
+.visualizer span:nth-child(4) { animation-delay: 420ms; }
+.visualizer span:nth-child(5) { animation-delay: 560ms; }
+.visualizer span:nth-child(6) { animation-delay: 700ms; }
+.visualizer span:nth-child(7) { animation-delay: 840ms; }
+
+.media-player.is-playing .visualizer {
+  opacity: 0.9;
+}
+
+.media-player.is-playing .visualizer span {
+  animation-name: equalizerPlaying;
+  animation-duration: 900ms;
+}
+
+.media-player .controls {
+  width: min(470px, 100%);
+  justify-content: space-between;
+  margin: 0;
+}
+
+.media-control,
+.media-play {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  background:
+    radial-gradient(circle at 46% 28%, rgba(255, 255, 255, 0.16), transparent 34%),
+    rgba(255, 255, 255, 0.055);
+  box-shadow:
+    0 18px 36px rgba(0, 0, 0, 0.42),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+}
+
+.media-control {
+  width: 104px;
+  height: 104px;
+  font-size: 1.7rem;
+}
+
+.media-play {
+  width: 138px;
+  height: 138px;
+  border-color: rgba(255, 255, 255, 0.22);
+  font-size: 0.92rem;
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.07),
+    0 18px 48px rgba(0, 0, 0, 0.48),
+    inset 0 2px 4px rgba(255, 255, 255, 0.18);
+}
+
+.media-player.is-playing .media-play {
+  animation: playPulse 1.8s ease-in-out infinite;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+}
+
+@keyframes playerSheen {
+  0%, 34% {
+    transform: translateX(-25%) rotate(11deg);
+    opacity: 0;
+  }
+  48% {
+    opacity: 0.75;
+  }
+  72%, 100% {
+    transform: translateX(210%) rotate(11deg);
+    opacity: 0;
+  }
+}
+
+@keyframes equalizerIdle {
+  0%, 100% { height: 8px; }
+  50% { height: 15px; }
+}
+
+@keyframes equalizerPlaying {
+  0%, 100% { height: 8px; }
+  50% { height: 26px; }
+}
+
+@keyframes playPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px rgba(255, 255, 255, 0.07),
+      0 18px 48px rgba(0, 0, 0, 0.48),
+      inset 0 2px 4px rgba(255, 255, 255, 0.18);
+  }
+  50% {
+    box-shadow:
+      0 0 0 9px rgba(37, 244, 199, 0.08),
+      0 18px 54px rgba(37, 244, 199, 0.24),
+      inset 0 2px 4px rgba(255, 255, 255, 0.24);
+  }
+}
+
 .player-panel::before {
   content: "";
   position: absolute;
@@ -495,6 +696,38 @@ h3 {
   .player-panel {
     padding: 22px 16px;
     background: rgba(8, 10, 14, 0.62);
+  }
+
+  .media-player {
+    min-height: 260px;
+    padding: 30px 22px 28px;
+    border-radius: 34px;
+  }
+
+  .media-player::after {
+    inset: 10px;
+    border-radius: 26px;
+  }
+
+  .media-player .controls {
+    gap: 14px;
+  }
+
+  .media-control {
+    width: 76px;
+    height: 76px;
+    font-size: 1.35rem;
+  }
+
+  .media-play {
+    width: 100px;
+    height: 100px;
+    font-size: 0.78rem;
+  }
+
+  .player-copy #trackDetail {
+    max-width: 300px;
+    white-space: normal;
   }
 
   .player-topline,
