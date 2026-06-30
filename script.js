@@ -4,7 +4,10 @@ const WZXU_PLAYLISTS = [
   {
     name: "THE ONE IN ALL",
     tracks: [
-      // Paste all YouTube video links here.
+      "https://www.youtube.com/watch?v=p4vQ9fl5r9o&list=RDp4vQ9fl5r9o&start_radio=1",
+      "https://www.youtube.com/watch?v=xbbA-SVP0tI&list=RDxbbA-SVP0tI&start_radio=1",
+      "https://www.youtube.com/watch?v=3xrEaq-6TjQ&list=RDEMBVaVLvoz-yiKKjS-hBY5Lw&index=5",
+      "https://www.youtube.com/watch?v=l7uvW_GU2cs&list=RDEMBVaVLvoz-yiKKjS-hBY5Lw&index=7"
     ]
   }
 ];
