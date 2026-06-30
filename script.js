@@ -2,18 +2,10 @@
 // Each playlist can be renamed by changing its name value.
 const WZXU_PLAYLISTS = [
   {
-    name: "Oldies",
+    name: "THE ONE IN ALL",
     tracks: [
-      // Paste YouTube video links here later.
+      // Paste all YouTube video links here.
     ]
-  },
-  {
-    name: "Playlist 2",
-    tracks: []
-  },
-  {
-    name: "Playlist 3",
-    tracks: []
   }
 ];
 
