@@ -260,6 +260,36 @@ h3 {
   padding-top: 20px;
 }
 
+.playlist-tabs {
+  display: flex;
+  gap: 10px;
+  margin: 0 0 22px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.playlist-tab {
+  cursor: pointer;
+  min-height: 42px;
+  padding: 0 16px;
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.055);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 850;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.playlist-tab:hover,
+.playlist-tab.active {
+  transform: translateY(-1px);
+  border-color: rgba(37, 244, 199, 0.65);
+  background: rgba(37, 244, 199, 0.13);
+}
+
 .playlist-heading p {
   margin: 0;
   font-weight: 800;

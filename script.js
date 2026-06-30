@@ -1,13 +1,28 @@
-// Playlist ID: replace this with your public YouTube playlist ID.
-// You can also paste a single YouTube video URL or video ID for a one-track preview.
-const YOUTUBE_PLAYLIST_ID = "https://youtu.be/S0KAAsanVms?si=h8_lhfqNMIPThDN5";
+// Playlists: paste individual YouTube video links into the tracks arrays below.
+// Each playlist can be renamed by changing its name value.
+const WZXU_PLAYLISTS = [
+  {
+    name: "Oldies",
+    tracks: [
+      // Paste YouTube video links here later.
+    ]
+  },
+  {
+    name: "Playlist 2",
+    tracks: []
+  },
+  {
+    name: "Playlist 3",
+    tracks: []
+  }
+];
 
 // Button links: you can also edit these in index.html if you prefer.
 // Brand text and tagline are commented in index.html.
 
 let player;
-let playlistItems = [];
-let currentIndex = 0;
+let activePlaylistIndex = 0;
+let currentTrackIndex = 0;
 let isReady = false;
 
 const playPauseBtn = document.getElementById("playPauseBtn");
@@ -16,28 +31,20 @@ const nextBtn = document.getElementById("nextBtn");
 const trackTitle = document.getElementById("trackTitle");
 const trackDetail = document.getElementById("trackDetail");
 const playerState = document.getElementById("playerState");
+const playlistTabs = document.getElementById("playlistTabs");
 const playlistEl = document.getElementById("playlist");
 const playlistCount = document.getElementById("playlistCount");
-const youtubeSource = parseYouTubeSource(YOUTUBE_PLAYLIST_ID);
 
 function onYouTubeIframeAPIReady() {
-  const playerOptions = {
-    controls: 0,
-    modestbranding: 1,
-    rel: 0,
-    playsinline: 1
-  };
-
-  if (youtubeSource.type === "playlist") {
-    playerOptions.listType = "playlist";
-    playerOptions.list = youtubeSource.id;
-  }
-
   player = new YT.Player("youtubePlayer", {
     height: "200",
     width: "320",
-    videoId: youtubeSource.type === "video" ? youtubeSource.id : undefined,
-    playerVars: playerOptions,
+    playerVars: {
+      controls: 0,
+      modestbranding: 1,
+      rel: 0,
+      playsinline: 1
+    },
     events: {
       onReady: handlePlayerReady,
       onStateChange: handlePlayerStateChange,
@@ -48,76 +55,164 @@ function onYouTubeIframeAPIReady() {
 
 function handlePlayerReady() {
   isReady = true;
-
-  if (!youtubeSource.id) {
-    playerState.textContent = "YouTube source needed";
-    trackTitle.textContent = "Paste your YouTube playlist ID";
-    trackDetail.textContent = "Open script.js and replace the YouTube source variable.";
-    return;
-  }
-
   playerState.textContent = "Ready";
-  refreshPlaylist();
+  renderPlaylistTabs();
+  renderActivePlaylist();
 }
 
-function parseYouTubeSource(source) {
+function getActivePlaylist() {
+  return WZXU_PLAYLISTS[activePlaylistIndex] || WZXU_PLAYLISTS[0];
+}
+
+function getActiveTracks() {
+  return getActivePlaylist().tracks
+    .map((source, index) => ({
+      source,
+      videoId: parseYouTubeVideoId(source),
+      title: `Track ${index + 1}`
+    }))
+    .filter((track) => track.videoId);
+}
+
+function parseYouTubeVideoId(source) {
   const value = source.trim();
 
-  if (!value || value === "PASTE_PLAYLIST_ID_HERE") {
-    return { type: "empty", id: "" };
+  if (!value) {
+    return "";
   }
 
   try {
     const url = new URL(value);
-    const playlistId = url.searchParams.get("list");
-    const videoId = url.hostname.includes("youtu.be")
-      ? url.pathname.replace("/", "")
-      : url.searchParams.get("v");
 
-    if (playlistId) {
-      return { type: "playlist", id: playlistId };
+    if (url.hostname.includes("youtu.be")) {
+      return url.pathname.replace("/", "");
     }
 
-    if (videoId) {
-      return { type: "video", id: videoId };
+    if (url.hostname.includes("youtube.com")) {
+      return url.searchParams.get("v") || "";
     }
   } catch (error) {
-    // Plain IDs land here, which is expected.
+    // Plain YouTube video IDs land here, which is expected.
   }
 
-  if (value.startsWith("PL") || value.startsWith("OLAK5uy_") || value.startsWith("UU")) {
-    return { type: "playlist", id: value };
-  }
-
-  return { type: "video", id: value };
+  return value;
 }
 
-function refreshPlaylist() {
-  if (youtubeSource.type === "video") {
-    playlistItems = [{
-      videoId: youtubeSource.id,
-      title: "WZXU RADIO Preview"
-    }];
-    currentIndex = 0;
-    renderPlaylist();
-    updateTrackDisplay();
+function renderPlaylistTabs() {
+  playlistTabs.innerHTML = "";
+
+  WZXU_PLAYLISTS.forEach((playlist, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "playlist-tab";
+    button.textContent = playlist.name;
+    button.setAttribute("aria-pressed", String(index === activePlaylistIndex));
+
+    if (index === activePlaylistIndex) {
+      button.classList.add("active");
+    }
+
+    button.addEventListener("click", () => switchPlaylist(index));
+    playlistTabs.appendChild(button);
+  });
+}
+
+function switchPlaylist(index) {
+  activePlaylistIndex = index;
+  currentTrackIndex = 0;
+  playPauseBtn.textContent = "Play";
+  playerState.textContent = "Ready";
+
+  if (isReady) {
+    player.stopVideo();
+  }
+
+  renderPlaylistTabs();
+  renderActivePlaylist();
+}
+
+function renderActivePlaylist() {
+  const playlist = getActivePlaylist();
+  const tracks = getActiveTracks();
+
+  playlistEl.innerHTML = "";
+  playlistCount.textContent = `${tracks.length} ${tracks.length === 1 ? "track" : "tracks"}`;
+
+  if (!tracks.length) {
+    trackTitle.textContent = `${playlist.name} is ready`;
+    trackDetail.textContent = "Add YouTube links in script.js.";
+
+    const empty = document.createElement("li");
+    empty.className = "playlist-empty";
+    empty.textContent = `${playlist.name} is ready. Add YouTube links in script.js.`;
+    playlistEl.appendChild(empty);
     return;
   }
 
-  const rawPlaylist = player.getPlaylist() || [];
-  playlistItems = rawPlaylist.map((videoId, index) => ({
-    videoId,
-    title: `Playlist Track ${index + 1}`
-  }));
+  tracks.forEach((track, index) => {
+    const li = document.createElement("li");
+    if (index === currentTrackIndex) {
+      li.classList.add("active");
+    }
 
-  currentIndex = player.getPlaylistIndex() || 0;
-  renderPlaylist();
+    const button = document.createElement("button");
+    button.type = "button";
+    button.setAttribute("aria-label", `Play ${playlist.name} track ${index + 1}`);
+    button.addEventListener("click", () => playTrack(index));
+
+    const number = document.createElement("span");
+    number.className = "index";
+    number.textContent = String(index + 1).padStart(2, "0");
+
+    const title = document.createElement("span");
+    title.textContent = track.title;
+
+    button.append(number, title);
+    li.appendChild(button);
+    playlistEl.appendChild(li);
+  });
+
   updateTrackDisplay();
 }
 
-function handlePlayerStateChange(event) {
-  refreshPlaylist();
+function updateTrackDisplay() {
+  const playlist = getActivePlaylist();
+  const tracks = getActiveTracks();
+  const activeTrack = tracks[currentTrackIndex];
 
+  if (!activeTrack) {
+    return;
+  }
+
+  trackTitle.textContent = activeTrack.title;
+  trackDetail.textContent = `${playlist.name} | Track ${currentTrackIndex + 1} of ${tracks.length}`;
+}
+
+function playTrack(index) {
+  const tracks = getActiveTracks();
+  const selectedTrack = tracks[index];
+
+  if (!isReady || !selectedTrack) {
+    return;
+  }
+
+  currentTrackIndex = index;
+  player.loadVideoById(selectedTrack.videoId);
+  renderActivePlaylist();
+}
+
+function playCurrentTrack() {
+  const tracks = getActiveTracks();
+
+  if (!isReady || !tracks.length) {
+    playerState.textContent = "Add tracks first";
+    return;
+  }
+
+  player.loadVideoById(tracks[currentTrackIndex].videoId);
+}
+
+function handlePlayerStateChange(event) {
   if (event.data === YT.PlayerState.PLAYING) {
     playPauseBtn.textContent = "Pause";
     playPauseBtn.setAttribute("aria-label", "Pause playlist");
@@ -131,8 +226,7 @@ function handlePlayerStateChange(event) {
   }
 
   if (event.data === YT.PlayerState.ENDED) {
-    playPauseBtn.textContent = "Play";
-    playerState.textContent = "Track ended";
+    playNextTrack();
   }
 
   if (event.data === YT.PlayerState.BUFFERING) {
@@ -145,71 +239,37 @@ function handlePlayerError() {
   trackDetail.textContent = "This track may be private, removed, or blocked from embedding.";
 }
 
-function renderPlaylist() {
-  playlistEl.innerHTML = "";
-  playlistCount.textContent = `${playlistItems.length} ${playlistItems.length === 1 ? "track" : "tracks"}`;
+function playPreviousTrack() {
+  const tracks = getActiveTracks();
 
-  if (!playlistItems.length) {
-    const empty = document.createElement("li");
-    empty.className = "playlist-empty";
-    empty.textContent = "No public playlist tracks found yet.";
-    playlistEl.appendChild(empty);
+  if (!isReady || !tracks.length) {
     return;
   }
 
-  playlistItems.forEach((item, index) => {
-    const li = document.createElement("li");
-    if (index === currentIndex) {
-      li.classList.add("active");
-    }
-
-    const button = document.createElement("button");
-    button.type = "button";
-    button.setAttribute("aria-label", `Play track ${index + 1}`);
-    button.addEventListener("click", () => playTrack(index));
-
-    const number = document.createElement("span");
-    number.className = "index";
-    number.textContent = String(index + 1).padStart(2, "0");
-
-    const title = document.createElement("span");
-    title.textContent = item.title;
-
-    button.append(number, title);
-    li.appendChild(button);
-    playlistEl.appendChild(li);
-  });
+  currentTrackIndex = currentTrackIndex === 0 ? tracks.length - 1 : currentTrackIndex - 1;
+  playTrack(currentTrackIndex);
 }
 
-function updateTrackDisplay() {
-  if (!playlistItems.length) {
+function playNextTrack() {
+  const tracks = getActiveTracks();
+
+  if (!isReady || !tracks.length) {
     return;
   }
 
-  const activeTrack = playlistItems[currentIndex] || playlistItems[0];
-  trackTitle.textContent = activeTrack.title;
-  trackDetail.textContent = `Track ${currentIndex + 1} of ${playlistItems.length}`;
-}
-
-function playTrack(index) {
-  if (!isReady || !playlistItems.length) {
-    return;
-  }
-
-  currentIndex = index;
-
-  if (youtubeSource.type === "video") {
-    player.playVideo();
-  } else {
-    player.playVideoAt(index);
-  }
-
-  renderPlaylist();
-  updateTrackDisplay();
+  currentTrackIndex = currentTrackIndex === tracks.length - 1 ? 0 : currentTrackIndex + 1;
+  playTrack(currentTrackIndex);
 }
 
 playPauseBtn.addEventListener("click", () => {
-  if (!isReady || !youtubeSource.id) {
+  if (!isReady) {
+    return;
+  }
+
+  const tracks = getActiveTracks();
+
+  if (!tracks.length) {
+    playerState.textContent = "Add tracks first";
     return;
   }
 
@@ -217,33 +277,12 @@ playPauseBtn.addEventListener("click", () => {
 
   if (state === YT.PlayerState.PLAYING) {
     player.pauseVideo();
-  } else {
+  } else if (state === YT.PlayerState.PAUSED) {
     player.playVideo();
+  } else {
+    playCurrentTrack();
   }
 });
 
-prevBtn.addEventListener("click", () => {
-  if (!isReady || !playlistItems.length) {
-    return;
-  }
-
-  if (youtubeSource.type === "video") {
-    player.seekTo(0);
-    return;
-  }
-
-  player.previousVideo();
-});
-
-nextBtn.addEventListener("click", () => {
-  if (!isReady || !playlistItems.length) {
-    return;
-  }
-
-  if (youtubeSource.type === "video") {
-    player.seekTo(0);
-    return;
-  }
-
-  player.nextVideo();
-});
+prevBtn.addEventListener("click", playPreviousTrack);
+nextBtn.addEventListener("click", playNextTrack);
