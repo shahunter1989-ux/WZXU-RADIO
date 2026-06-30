@@ -1,8 +1,9 @@
 :root {
+  --background-image: url("assets/wzxu-background.png");
   --bg: #050609;
-  --panel: rgba(14, 17, 24, 0.92);
-  --panel-strong: rgba(22, 26, 36, 0.98);
-  --line: rgba(255, 255, 255, 0.12);
+  --panel: rgba(8, 10, 14, 0.58);
+  --panel-strong: rgba(8, 10, 14, 0.66);
+  --line: rgba(255, 255, 255, 0.18);
   --text: #f5f7fb;
   --muted: #9aa3b2;
   --accent: #25f4c7;
@@ -16,14 +17,36 @@
 }
 
 body {
+  position: relative;
   margin: 0;
   min-height: 100vh;
   color: var(--text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+body::before {
+  z-index: -2;
+  background-image: var(--background-image);
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: contain;
+}
+
+body::after {
+  z-index: -1;
   background:
-    radial-gradient(circle at 18% 10%, rgba(37, 244, 199, 0.14), transparent 28rem),
-    radial-gradient(circle at 82% 18%, rgba(185, 108, 255, 0.13), transparent 30rem),
-    linear-gradient(145deg, #050609 0%, #0c0e14 52%, #050609 100%);
+    radial-gradient(circle at 14% 12%, rgba(0, 0, 0, 0.1), transparent 22rem),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.14)),
+    rgba(0, 0, 0, 0.3);
 }
 
 a {
@@ -36,18 +59,31 @@ a {
 }
 
 .site-shell {
+  position: relative;
+  z-index: 1;
   width: min(1120px, calc(100% - 32px));
   margin: 0 auto;
   padding: 48px 0;
 }
 
 .hero {
-  min-height: 42vh;
+  min-height: 46vh;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 220px;
   gap: 32px;
   align-items: center;
   padding: 56px 0 34px;
+}
+
+.hero-copy {
+  width: fit-content;
+  max-width: 700px;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(5, 6, 9, 0.34);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.28);
 }
 
 .eyebrow,
@@ -97,8 +133,9 @@ h1 {
   border: 1px solid var(--line);
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02)),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.02)),
     var(--panel);
+  backdrop-filter: blur(10px);
   box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.16);
 }
 
@@ -111,6 +148,10 @@ h1 {
   -webkit-background-clip: text;
 }
 
+.mobile-story-art {
+  display: none;
+}
+
 .player-panel {
   position: relative;
   overflow: hidden;
@@ -120,6 +161,7 @@ h1 {
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.02)),
     var(--panel);
+  backdrop-filter: blur(16px);
   box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
@@ -157,7 +199,8 @@ h2 {
   padding: 8px 12px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.075);
+  backdrop-filter: blur(10px);
   font-size: 0.86rem;
   white-space: nowrap;
 }
@@ -168,6 +211,7 @@ h2 {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   background: var(--panel-strong);
+  backdrop-filter: blur(14px);
 }
 
 .track-art {
@@ -219,7 +263,8 @@ h3 {
   cursor: pointer;
   border: 1px solid var(--line);
   color: var(--text);
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(10px);
   transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
 }
 
@@ -276,7 +321,8 @@ h3 {
   border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.055);
+  background: rgba(255, 255, 255, 0.085);
+  backdrop-filter: blur(10px);
   font: inherit;
   font-size: 0.88rem;
   font-weight: 850;
@@ -313,7 +359,8 @@ h3 {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
   color: #d9dfeb;
-  background: rgba(255, 255, 255, 0.045);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
 }
 
 .playlist li button {
@@ -380,6 +427,16 @@ h3 {
 }
 
 @media (max-width: 760px) {
+  body::before {
+    background-position: center top;
+    background-size: auto 100vh;
+    opacity: 0.28;
+  }
+
+  body::after {
+    background: rgba(0, 0, 0, 0.52);
+  }
+
   .site-shell {
     width: min(100% - 22px, 1120px);
     padding: 24px 0;
@@ -388,15 +445,56 @@ h3 {
   .hero {
     min-height: auto;
     grid-template-columns: 1fr;
-    padding: 30px 0 24px;
+    gap: 16px;
+    padding: 18px 0 24px;
+  }
+
+  .hero-copy {
+    order: 3;
+    width: 100%;
+    padding: 18px;
+    background: rgba(5, 6, 9, 0.46);
   }
 
   .hero-mark {
-    width: min(180px, 52vw);
+    order: 1;
+    width: 100%;
+    min-height: 310px;
+    aspect-ratio: auto;
+    align-items: end;
+    justify-items: start;
+    padding: 22px;
+    background-image:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.38)),
+      var(--background-image);
+    background-repeat: no-repeat;
+    background-size: auto 170%;
+    background-position: 84% center;
+  }
+
+  .hero-mark span {
+    display: none;
+  }
+
+  .mobile-story-art {
+    order: 2;
+    display: block;
+    width: 100%;
+    min-height: 380px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background-image:
+      linear-gradient(90deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.42)),
+      var(--background-image);
+    background-repeat: no-repeat;
+    background-size: auto 132%;
+    background-position: 12% top;
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.14);
   }
 
   .player-panel {
     padding: 22px 16px;
+    background: rgba(8, 10, 14, 0.62);
   }
 
   .player-topline,

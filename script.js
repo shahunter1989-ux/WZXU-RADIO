@@ -235,6 +235,12 @@ function handlePlayerStateChange(event) {
 }
 
 function handlePlayerError() {
+  if (!getActiveTracks().length) {
+    playerState.textContent = "Ready";
+    trackDetail.textContent = "Add YouTube links in script.js.";
+    return;
+  }
+
   playerState.textContent = "Playback unavailable";
   trackDetail.textContent = "This track may be private, removed, or blocked from embedding.";
 }
