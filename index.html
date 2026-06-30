@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WZXU RADIO</title>
+  <meta
+    name="description"
+    content="Preview the latest sounds, mixes, and creative drops from WZXU RADIO."
+  />
+  <link rel="preconnect" href="https://www.youtube.com" />
+  <link rel="preconnect" href="https://i.ytimg.com" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="site-shell">
+    <section class="hero" aria-labelledby="site-title">
+      <div class="hero-copy">
+        <!-- Brand text: replace this title anywhere you want to rename the project. -->
+        <p class="eyebrow">Independent signal</p>
+        <h1 id="site-title">WZXU RADIO</h1>
+
+        <!-- Tagline: replace this line to change the hero tagline. -->
+        <p class="tagline">Music from the Underground</p>
+        <p class="intro">
+          Preview the latest sounds, mixes, and creative drops from WZXU RADIO.
+        </p>
+      </div>
+      <div class="hero-mark" aria-hidden="true">
+        <span>WZ</span>
+      </div>
+    </section>
+
+    <section class="player-panel" aria-labelledby="player-title">
+      <div class="player-topline">
+        <div>
+          <p class="section-kicker">Now streaming</p>
+          <h2 id="player-title">Underground Playlist</h2>
+        </div>
+        <p id="playerState" class="player-state">Loading player</p>
+      </div>
+
+      <div class="track-display">
+        <div class="track-art" aria-hidden="true">
+          <span></span>
+        </div>
+        <div class="track-meta">
+          <p class="track-label">Current track</p>
+          <h3 id="trackTitle">Connect a YouTube playlist</h3>
+          <p id="trackDetail">Paste your playlist ID in script.js to begin.</p>
+        </div>
+      </div>
+
+      <div class="controls" aria-label="Playlist controls">
+        <button id="prevBtn" class="icon-btn" type="button" aria-label="Previous track">&lt;</button>
+        <button id="playPauseBtn" class="play-btn" type="button" aria-label="Play playlist">Play</button>
+        <button id="nextBtn" class="icon-btn" type="button" aria-label="Next track">&gt;</button>
+      </div>
+
+      <div class="playlist-wrap">
+        <div class="playlist-heading">
+          <p>Playlist</p>
+          <span id="playlistCount">0 tracks</span>
+        </div>
+        <ol id="playlist" class="playlist" aria-label="YouTube playlist tracks">
+          <li class="playlist-empty">Waiting for playlist data.</li>
+        </ol>
+      </div>
+
+      <div class="youtube-minimized" aria-label="YouTube player container">
+        <div id="youtubePlayer"></div>
+      </div>
+    </section>
+
+    <section class="links" aria-label="WZXU RADIO links">
+      <!-- Button links: replace the href values below with your real URLs. -->
+      <a class="link-button" href="https://www.youtube.com/" target="_blank" rel="noopener">YouTube</a>
+      <a class="link-button secondary" href="https://example.com/" target="_blank" rel="noopener">Contact / Website</a>
+    </section>
+  </main>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="script.js"></script>
+</body>
+</html>
