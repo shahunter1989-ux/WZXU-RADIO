@@ -11,7 +11,8 @@ const WZXU_PLAYLISTS = [
       "https://music.youtube.com/watch?v=PbMXtYDGM8c&si=a4NowzGZWzwQOt9X",
       "https://music.youtube.com/watch?v=9NXVRraVK5A&si=HecpGLiTASoHhOVi",
       "https://music.youtube.com/watch?v=rI72ieJscYE&si=qSAcp1O3McTmiGk5",
-      "https://music.youtube.com/watch?v=3AzSb-InqsA&si=jhcjQOwcH1t_Q2kd"
+      "https://music.youtube.com/watch?v=3AzSb-InqsA&si=jhcjQOwcH1t_Q2kd",
+      "https://youtu.be/Re85ukzn11E?is=SUhiPKuWu0_Zlcyw"
     ]
   }
 ];
