@@ -31,6 +31,9 @@ const playlistTabs = document.getElementById("playlistTabs");
 const playlistEl = document.getElementById("playlist");
 const playlistCount = document.getElementById("playlistCount");
 const mediaPlayer = document.getElementById("mediaPlayer");
+const artworkOpenBtn = document.getElementById("artworkOpenBtn");
+const artworkViewer = document.getElementById("artworkViewer");
+const artworkCloseBtn = document.getElementById("artworkCloseBtn");
 
 function onYouTubeIframeAPIReady() {
   player = new YT.Player("youtubePlayer", {
@@ -278,3 +281,32 @@ playPauseBtn.addEventListener("click", () => {
 
 prevBtn.addEventListener("click", playPreviousTrack);
 nextBtn.addEventListener("click", playNextTrack);
+
+function openArtworkViewer() {
+  artworkViewer.hidden = false;
+  artworkOpenBtn.setAttribute("aria-expanded", "true");
+  document.body.classList.add("artwork-open");
+  artworkCloseBtn.focus();
+}
+
+function closeArtworkViewer() {
+  artworkViewer.hidden = true;
+  artworkOpenBtn.setAttribute("aria-expanded", "false");
+  document.body.classList.remove("artwork-open");
+  artworkOpenBtn.focus();
+}
+
+artworkOpenBtn.addEventListener("click", openArtworkViewer);
+artworkCloseBtn.addEventListener("click", closeArtworkViewer);
+
+artworkViewer.addEventListener("click", (event) => {
+  if (event.target === artworkViewer) {
+    closeArtworkViewer();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !artworkViewer.hidden) {
+    closeArtworkViewer();
+  }
+});

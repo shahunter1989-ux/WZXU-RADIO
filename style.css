@@ -66,6 +66,96 @@ a {
   padding: 48px 0;
 }
 
+.artwork-open-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 20;
+  min-height: 42px;
+  padding: 0 16px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  color: var(--text);
+  background: rgba(8, 10, 14, 0.34);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.artwork-open-btn:hover,
+.artwork-open-btn:focus-visible,
+.artwork-close-btn:hover,
+.artwork-close-btn:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(37, 244, 199, 0.68);
+  background: rgba(37, 244, 199, 0.12);
+  outline: none;
+}
+
+.artwork-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background: rgba(0, 0, 0, 0.86);
+  backdrop-filter: blur(12px);
+}
+
+.artwork-viewer[hidden] {
+  display: none;
+}
+
+.artwork-viewer-frame {
+  width: min(96vw, 1536px);
+  max-height: 92vh;
+  display: grid;
+  place-items: center;
+}
+
+.artwork-viewer img {
+  display: block;
+  width: auto;
+  max-width: min(96vw, 1536px);
+  max-height: 92vh;
+  object-fit: contain;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.7);
+}
+
+.artwork-close-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 101;
+  min-height: 42px;
+  padding: 0 16px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  color: var(--text);
+  background: rgba(8, 10, 14, 0.56);
+  backdrop-filter: blur(14px);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+body.artwork-open {
+  overflow: hidden;
+}
+
 .hero {
   min-height: 46vh;
   display: flex;
@@ -578,6 +668,33 @@ h3 {
 }
 
 @media (max-width: 760px) {
+  .artwork-open-btn {
+    top: 12px;
+    right: auto;
+    left: 12px;
+    min-height: 38px;
+    padding: 0 12px;
+    font-size: 0.72rem;
+  }
+
+  .artwork-viewer {
+    padding: 14px;
+  }
+
+  .artwork-close-btn {
+    top: 12px;
+    right: 12px;
+    min-height: 38px;
+    padding: 0 12px;
+    font-size: 0.72rem;
+  }
+
+  .artwork-viewer-frame,
+  .artwork-viewer img {
+    max-width: 96vw;
+    max-height: 86vh;
+  }
+
   body::before {
     background-position: center top;
     background-size: auto 100vh;
