@@ -22,6 +22,8 @@ const WZXU_PLAYLISTS = [
 let player;
 let activePlaylistIndex = 0;
 let currentTrackIndex = 0;
+let shuffleQueue = [];
+let shufflePosition = 0;
 let isReady = false;
 let hasAttemptedPlayback = false;
 
@@ -60,6 +62,7 @@ function onYouTubeIframeAPIReady() {
 function handlePlayerReady() {
   isReady = true;
   playerState.textContent = "Now Playing";
+  buildShuffleQueue(getActiveTracks().length);
   renderPlaylistTabs();
   renderActivePlaylist();
 }
@@ -102,6 +105,72 @@ function parseYouTubeVideoId(source) {
   return value;
 }
 
+function buildShuffleQueue(trackCount) {
+  shuffleQueue = shuffleIndexes(Array.from({ length: trackCount }, (_, index) => index));
+  shufflePosition = 0;
+}
+
+function shuffleIndexes(indexes) {
+  const shuffled = [...indexes];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+  }
+
+  return shuffled;
+}
+
+function getCurrentShuffleIndex() {
+  if (!shuffleQueue.length) {
+    buildShuffleQueue(getActiveTracks().length);
+  }
+
+  return shuffleQueue[shufflePosition] ?? 0;
+}
+
+function advanceShuffle() {
+  const tracks = getActiveTracks();
+
+  if (!tracks.length) {
+    return 0;
+  }
+
+  shufflePosition += 1;
+
+  if (shufflePosition >= shuffleQueue.length) {
+    const previousTrackIndex = currentTrackIndex;
+    buildShuffleQueue(tracks.length);
+
+    if (tracks.length > 1 && shuffleQueue[0] === previousTrackIndex) {
+      const swapIndex = shuffleQueue.findIndex((trackIndex) => trackIndex !== previousTrackIndex);
+      [shuffleQueue[0], shuffleQueue[swapIndex]] = [shuffleQueue[swapIndex], shuffleQueue[0]];
+    }
+  }
+
+  return getCurrentShuffleIndex();
+}
+
+function rewindShuffle() {
+  const tracks = getActiveTracks();
+
+  if (!tracks.length) {
+    return 0;
+  }
+
+  if (!shuffleQueue.length) {
+    buildShuffleQueue(tracks.length);
+  }
+
+  if (shufflePosition === 0) {
+    shufflePosition = shuffleQueue.length - 1;
+  } else {
+    shufflePosition -= 1;
+  }
+
+  return getCurrentShuffleIndex();
+}
+
 function renderPlaylistTabs() {
   playlistTabs.innerHTML = "";
 
@@ -124,6 +193,7 @@ function renderPlaylistTabs() {
 function switchPlaylist(index) {
   activePlaylistIndex = index;
   currentTrackIndex = 0;
+  buildShuffleQueue(getActiveTracks().length);
   playPauseBtn.textContent = "Play";
   playerState.textContent = "Ready";
 
@@ -192,7 +262,7 @@ function playCurrentTrack() {
   }
 
   hasAttemptedPlayback = true;
-  player.loadVideoById(tracks[currentTrackIndex].videoId);
+  playTrack(getCurrentShuffleIndex());
 }
 
 function handlePlayerStateChange(event) {
@@ -245,8 +315,7 @@ function playPreviousTrack() {
     return;
   }
 
-  currentTrackIndex = currentTrackIndex === 0 ? tracks.length - 1 : currentTrackIndex - 1;
-  playTrack(currentTrackIndex);
+  playTrack(rewindShuffle());
 }
 
 function playNextTrack() {
@@ -256,8 +325,7 @@ function playNextTrack() {
     return;
   }
 
-  currentTrackIndex = currentTrackIndex === tracks.length - 1 ? 0 : currentTrackIndex + 1;
-  playTrack(currentTrackIndex);
+  playTrack(advanceShuffle());
 }
 
 playPauseBtn.addEventListener("click", () => {
